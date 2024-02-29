@@ -14,6 +14,37 @@ function ApiJs(){
     const [count, setCount] = useState(0)
     const urlIcon = `https://openweathermap.org/img/wn/${Rweather}@2x.png`
 
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        //coord, weather, base, main, visibility, wind, clouds, dt, sys, timezone, id, name, cod
+        const {latitude, longitude} = position.coords;
+        const apiKey = 'b923ae916e3afad1ee80ff39d3ac6d08'
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric&lang=pt_br`
+        //console.log(longitude, latitude, "lattt")
+        fetch(apiUrl)
+        .then(response =>{
+            if(!response.ok){
+                console.log('erro')
+            }
+            return response.json();
+        })
+        .then(data => {
+            SetAltNuvens(data.clouds.all)
+            //console.log("data: ", data)
+            SetCidade(data.name)
+            SetPaís(data.sys.country)
+            SetUmid(data.main.humidity)
+            SetTempMax(data.main.temp_max)
+            SetTempMin(data.main.temp_min)
+            SetWeather(data.weather[0].icon)
+            SetRealWeather(data.weather[0].description)
+            SetWind(data.wind.speed)
+        }).catch(error => {
+            console.log('deu erro: ', error)
+        })
+    
+        
+    })
+
     setInterval((altNuvens, cidade, país, temp_max, temp_min, umidade, Rweather, RealWeather,count) => {
 
         navigator.geolocation.getCurrentPosition(async (position) => {
@@ -46,7 +77,7 @@ function ApiJs(){
         
             
         })
-    }, 5000)
+    }, 50000)
 
     return(
         <div className='main'>
